@@ -1,0 +1,922 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#f3f8ff">
+<title>Луна — Лунное дитя</title>
+
+<meta name="description" content="Луна — Лунное дитя. Интерактивная история между двумя мирами и официальные ссылки Луны.">
+<meta property="og:title" content="Луна — Лунное дитя">
+<meta property="og:description" content="История между двумя мирами.">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23070b14'/%3E%3Ccircle cx='30' cy='31' r='18' fill='%23dcecff'/%3E%3Ccircle cx='38' cy='25' r='18' fill='%23070b14'/%3E%3C/svg%3E">
+
+<style>
+:root{
+ --ink:#17263f;--reader:760px;--blue:#9ecbff;--violet:#d5c3ff;--rose:#f1bfdf;
+ --frame:rgba(92,126,176,.48);--text:#20324e;--sx:0px;--sy:0px;
+}
+*{box-sizing:border-box} html{scroll-behavior:smooth;background:#f5f9ff}
+body{margin:0;overflow-x:hidden;background:#f5f9ff;color:var(--text);font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif}
+.progress{position:fixed;left:0;top:0;width:100%;height:3px;z-index:300;background:rgba(255,255,255,.12)}
+.progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--violet),var(--rose));box-shadow:0 0 18px rgba(165,203,255,.8)}
+
+/* Persistent ornamental frame */
+.ornamental-frame{position:fixed;inset:18px;z-index:120;pointer-events:none;color:var(--frame);transition:color .8s ease,opacity .8s ease}
+.edge{position:absolute;background:currentColor;opacity:.72}
+.edge.top,.edge.bottom{height:1px;left:66px;right:66px}
+.edge.left,.edge.right{width:1px;top:66px;bottom:66px}
+.edge.top{top:0}.edge.bottom{bottom:0}.edge.left{left:0}.edge.right{right:0}
+.corner{position:absolute;width:62px;height:62px}
+.corner::before,.corner::after{content:"";position:absolute;border:1px solid currentColor}
+.corner::before{width:44px;height:18px}.corner::after{width:18px;height:44px}
+.tl{left:0;top:0} .tr{right:0;top:0;transform:scaleX(-1)} .bl{left:0;bottom:0;transform:scaleY(-1)} .br{right:0;bottom:0;transform:scale(-1)}
+.corner::before{left:0;top:0;border-right:0;border-bottom:0;border-radius:18px 0 0 0}
+.corner::after{left:0;top:0;border-right:0;border-bottom:0;border-radius:18px 0 0 0}
+.corner i{position:absolute;left:17px;top:17px;width:20px;height:20px;border:1px solid currentColor;transform:rotate(45deg);opacity:.75}
+.frame-moon{position:absolute;left:50%;top:-8px;transform:translateX(-50%);width:36px;height:20px;background:var(--pagebg,#f5f9ff);transition:background .8s ease}
+.frame-moon::before{content:"";position:absolute;left:7px;top:0;width:20px;height:20px;border:1px solid currentColor;border-radius:50%}
+.frame-moon::after{content:"";position:absolute;left:13px;top:-1px;width:16px;height:16px;border-radius:50%;background:var(--pagebg,#f5f9ff);transition:background .8s ease}
+.frame-glow-a,.frame-glow-b{position:absolute;width:90px;height:90px;filter:blur(26px);opacity:.25}
+.frame-glow-a{left:-42px;top:-42px;background:var(--blue)} .frame-glow-b{right:-42px;bottom:-42px;background:var(--rose)}
+
+
+.ornamental-frame::before,.ornamental-frame::after{
+  content:"";position:absolute;top:18px;width:105px;height:34px;opacity:.72;
+  border-top:1px solid currentColor;pointer-events:none;
+}
+.ornamental-frame::before{
+  left:38px;border-left:1px solid currentColor;border-radius:24px 0 0 0;
+  transform:skewX(-24deg);
+}
+.ornamental-frame::after{
+  right:38px;border-right:1px solid currentColor;border-radius:0 24px 0 0;
+  transform:skewX(24deg);
+}
+
+/* Ambient background */
+.ambient{position:fixed;inset:0;z-index:1;pointer-events:none;overflow:hidden}
+.stars{position:absolute;inset:-3%;transform:translate3d(var(--sx),var(--sy),0);transition:transform .25s ease-out}
+.stars i{position:absolute;border-radius:50%;background:white;box-shadow:0 0 7px white;animation:twinkle ease-in-out infinite alternate}
+@keyframes twinkle{from{opacity:.05;transform:scale(.65)}to{opacity:.72;transform:scale(1.3)}}
+.eye-glows{position:absolute;inset:0;opacity:var(--glow,.12);transition:opacity .7s ease}
+.eye-glows::before,.eye-glows::after{content:"";position:absolute;width:48vw;height:48vw;min-width:360px;min-height:360px;border-radius:50%;filter:blur(95px)}
+.eye-glows::before{left:-20vw;top:18vh;background:rgba(130,193,255,.28)} .eye-glows::after{right:-20vw;top:50vh;background:rgba(242,172,221,.22)}
+
+.hero{position:relative;z-index:3;min-height:100vh;display:grid;place-items:center;text-align:center;padding:80px 60px;background:radial-gradient(circle at 50% 28%,#fff,#edf6ff 48%,#dcecff)}
+.hero-inner{animation:hero 1.4s ease both}
+@keyframes hero{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+.hero-sigil{width:78px;height:78px;border:1px solid rgba(92,126,177,.24);border-radius:50%;margin:0 auto 28px;position:relative;box-shadow:0 0 55px rgba(150,196,255,.48),inset 0 0 25px white}
+.hero-sigil::after{content:"";position:absolute;width:53px;height:53px;border-radius:50%;left:14px;top:7px;box-shadow:-13px 7px 0 rgba(111,148,205,.9);transform:rotate(-14deg)}
+.eyebrow{font-size:11px;letter-spacing:.42em;text-transform:uppercase;color:#7185a4}
+h1{font:400 clamp(70px,13vw,150px)/.86 Georgia,serif;letter-spacing:.11em;margin:16px 0 27px}
+.subtitle{font:italic clamp(18px,2vw,27px)/1.5 Georgia,serif;color:#6c82a2;margin-bottom:42px}
+.hero blockquote{margin:auto;max-width:620px;font:clamp(17px,2vw,23px)/1.7 Georgia,serif;color:#405473}
+.down{position:absolute;bottom:34px;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:#7185a3}
+.down::after{content:"↓";display:block;font-size:22px;margin-top:7px;animation:bob 1.8s ease-in-out infinite}@keyframes bob{50%{transform:translateY(7px)}}
+
+.chapter{position:relative;z-index:3;min-height:120vh;padding:130px 60px;display:flex;align-items:center;isolation:isolate;color:var(--chapterText)}
+.chapter-shell{width:min(100%,var(--reader));margin:auto;position:relative;z-index:5}
+.chapter-intro{min-height:52vh;display:flex;flex-direction:column;justify-content:center;align-items:flex-start}
+.chapter-sigil{width:42px;height:42px;margin-bottom:20px;position:relative;opacity:.5}
+.chapter-sigil::before{content:"";position:absolute;inset:5px;border:1px solid currentColor;transform:rotate(45deg)}
+.chapter-sigil i{position:absolute;left:50%;top:50%;width:8px;height:8px;border-radius:50%;background:currentColor;transform:translate(-50%,-50%);box-shadow:0 0 15px currentColor}
+.roman{font:400 clamp(52px,8vw,105px)/1 Georgia,serif;opacity:.11;letter-spacing:.06em}
+h2{font:400 clamp(42px,7vw,76px)/1.03 Georgia,serif;letter-spacing:-.025em;margin:4px 0 22px}
+.title-rule{width:180px;height:16px;position:relative;opacity:.4}
+.title-rule::before,.title-rule::after{content:"";position:absolute;top:8px;width:75px;height:1px;background:currentColor}
+.title-rule::before{left:0}.title-rule::after{right:0}.title-rule i{position:absolute;left:50%;top:4px;width:9px;height:9px;border:1px solid currentColor;transform:translateX(-50%) rotate(45deg)}
+.chapter-copy{padding:8vh 0 18vh;font-family:Georgia,"Times New Roman",serif}
+.lore-p{font-size:clamp(18px,2vw,22px);line-height:1.82;margin:0 0 18px;text-wrap:pretty;transition:color .7s ease,text-shadow .7s ease}
+.beat{font-size:clamp(28px,4.2vw,50px);line-height:1.25;margin:50px 0;letter-spacing:.01em}
+.quote{font-style:italic;padding-left:24px;border-left:1px solid currentColor;opacity:.84}
+.double-vision{position:relative;text-shadow:3px 0 rgba(160,203,255,.14),-3px 0 rgba(239,182,224,.12)}
+.error-word{letter-spacing:.12em;text-shadow:0 0 25px rgba(255,255,255,.12)}
+
+/* Continuous emotional palette by chapter */
+.ch1{--chapterText:#20324e;background:linear-gradient(#f5f9ff,#edf6ff)}
+.ch2{--chapterText:#29415f;background:linear-gradient(#edf6ff,#dfeeff)}
+.ch3{--chapterText:#334968;background:linear-gradient(#dfeeff,#b7cce9)}
+.ch4{--chapterText:#d9e7fb;background:linear-gradient(#899fbe,#18243d 22%,#0a1020 100%)}
+.ch5{--chapterText:#dce9ff;background:linear-gradient(#0a1020,#08101f)}
+.ch6{--chapterText:#d8d7f5;background:radial-gradient(circle at 75% 28%,rgba(139,114,194,.13),transparent 28%),linear-gradient(#08101f,#07101d)}
+.ch7{--chapterText:#edf2ff;background:#03050b;min-height:170vh}
+.ch8{--chapterText:#e6dff8;background:linear-gradient(#03050b,#111d35 55%,#8299ba)}
+.ch9{--chapterText:#445878;background:linear-gradient(#8299ba,#d9e8fa 48%,#eff6ff)}
+.ch10{--chapterText:#263a58;background:linear-gradient(#eff6ff,#dceaff 42%,#91a7c7 70%,#09101f 100%);min-height:205vh;align-items:flex-start;padding-top:160px}
+
+.shadow-label{position:absolute;z-index:2;left:50%;top:38%;transform:translate(-50%,-50%);font:700 clamp(95px,20vw,310px)/1 Inter,sans-serif;letter-spacing:.05em;white-space:nowrap;opacity:.025;color:currentColor;pointer-events:none}
+.shadow-label.strong{opacity:.055}
+.rejection-layer{position:absolute;z-index:2;inset:42% 0 auto;display:flex;flex-direction:column;align-items:center;gap:35px;pointer-events:none}
+.rejection-layer span{font:600 clamp(46px,9vw,130px)/1 Inter,sans-serif;letter-spacing:.08em;opacity:.035;text-decoration:line-through;text-decoration-thickness:2px}
+
+.memory-layer{position:absolute;inset:0;z-index:2;overflow:hidden;pointer-events:none}
+.memory{position:absolute;font:italic clamp(42px,7vw,112px)/1 Georgia,serif;white-space:nowrap;color:rgba(215,218,255,.06);will-change:transform}
+.m1{left:-8vw;top:23%}.m2{right:-18vw;top:50%}.m3{left:-4vw;top:73%}
+
+.void-stage{height:75vh;display:grid;place-items:center}
+.void-stage span{font:italic clamp(60px,11vw,145px)/1 Georgia,serif;opacity:0;transform:scale(.94);text-shadow:0 0 50px rgba(152,185,255,.16);transition:opacity 1.7s ease,transform 1.7s ease}
+.ch7.active .void-stage span{opacity:.96;transform:scale(1)}
+.ch7 .chapter-intro{min-height:70vh;align-items:center;text-align:center}.ch7 .title-rule{margin:auto}.ch7 .chapter-sigil{margin-left:auto;margin-right:auto}
+.ch7 .chapter-copy{padding-top:22vh}
+
+.final-identity{font-size:clamp(31px,5vw,60px);margin:58px 0;transition:transform 1s ease,opacity 1s ease,color 1s ease}
+.final-identity:last-of-type{font-size:clamp(70px,13vw,155px);text-align:center;letter-spacing:.12em;background:linear-gradient(90deg,#8fc8ff 10%,#f1f5ff 50%,#edb7dc 90%);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:none}
+
+.reveal{opacity:0;transform:translateY(44px);transition:opacity 1.15s ease,transform 1.15s cubic-bezier(.2,.72,.2,1)}.reveal.visible{opacity:1;transform:none}
+
+.finale{position:relative;z-index:4;min-height:110vh;display:grid;place-items:center;text-align:center;padding:80px 60px;background:#03050b;color:#eef5ff;overflow:hidden}
+.fullmoon{position:absolute;width:min(72vw,760px);aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 37% 32%,#fff,#e5f0ff 38%,#aec6e7 65%,rgba(105,132,178,.18) 70%,transparent 72%);filter:drop-shadow(0 0 85px rgba(128,169,235,.2));opacity:.55;animation:breathe 7s ease-in-out infinite alternate}
+@keyframes breathe{to{transform:scale(1.035);opacity:.63}}
+.finale-inner{position:relative;z-index:3}.finale small{font-size:10px;letter-spacing:.25em;text-transform:uppercase;opacity:.55}
+.finale h3{font:400 clamp(40px,7vw,88px)/1.14 Georgia,serif;margin:26px 0 0}
+.eyes{height:30px;width:150px;margin:34px auto 0;display:flex;justify-content:space-between;opacity:0;animation:eyes 8s ease-in-out 2s infinite}
+.eyes i{width:54px;height:5px;border-radius:50%;filter:blur(4px)}.eyes i:first-child{background:#98ccff;box-shadow:0 0 22px #98ccff}.eyes i:last-child{background:#efb6df;box-shadow:0 0 22px #efb6df}
+@keyframes eyes{0%,68%,100%{opacity:0;transform:scaleX(.55)}75%,85%{opacity:.6;transform:scaleX(1)}}
+.endmark{position:absolute;bottom:34px;font-size:10px;letter-spacing:.22em;text-transform:uppercase;opacity:.3}
+
+@media(max-width:700px){
+ .ornamental-frame{inset:9px} .edge.top,.edge.bottom{left:45px;right:45px} .edge.left,.edge.right{top:45px;bottom:45px}
+ .corner{transform:scale(.72);transform-origin:top left}.tr{transform:scaleX(-.72);transform-origin:top right}.bl{transform:scaleY(-.72);transform-origin:bottom left}.br{transform:scale(-.72);transform-origin:bottom right}
+ .hero,.chapter,.finale{padding-left:30px;padding-right:30px}
+ .chapter{padding-top:90px;padding-bottom:90px;align-items:flex-start}.chapter-intro{min-height:40vh}.chapter-copy{padding-top:5vh}
+ .lore-p{line-height:1.72}.memory{font-size:42px}.rejection-layer span{font-size:48px}
+}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;animation:none!important;transition:none!important}.reveal,.void-stage span,.eyes{opacity:1!important;transform:none!important}}
+
+/* v4 atmosphere pass */
+.shooting-star{
+  position:fixed;z-index:2;width:120px;height:1px;pointer-events:none;opacity:0;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.9),transparent);
+  filter:drop-shadow(0 0 5px rgba(180,211,255,.8));
+  transform:rotate(-24deg);
+  animation:shoot 11s linear infinite;
+}
+.shooting-star.s2{top:27%;left:74%;animation-delay:5.8s;animation-duration:14s}
+.shooting-star.s1{top:16%;left:18%;animation-delay:1.7s}
+@keyframes shoot{
+  0%,78%,100%{opacity:0;translate:0 0}
+  80%{opacity:.08}
+  84%{opacity:.7}
+  90%{opacity:0;translate:180px 85px}
+}
+.dust{
+  position:fixed;inset:0;z-index:2;pointer-events:none;overflow:hidden;
+}
+.dust i{
+  position:absolute;border-radius:50%;background:rgba(230,240,255,.72);
+  box-shadow:0 0 8px rgba(200,222,255,.5);
+  animation:drift var(--dur) ease-in-out infinite alternate;
+}
+@keyframes drift{
+  from{transform:translate3d(0,12px,0);opacity:.05}
+  to{transform:translate3d(var(--dx),-24px,0);opacity:.48}
+}
+.chapter-intro h2{
+  text-shadow:0 0 28px rgba(185,211,255,.06);
+}
+.ch4 .chapter-intro h2,.ch5 .chapter-intro h2,.ch6 .chapter-intro h2,.ch7 .chapter-intro h2{
+  text-shadow:0 0 30px rgba(181,207,255,.14);
+}
+.lore-p::selection,h1::selection,h2::selection{
+  background:rgba(177,204,255,.35);
+}
+.chapter-copy .lore-p{
+  position:relative;
+}
+.chapter-copy .lore-p:nth-child(9n)::before{
+  content:"✦";position:absolute;left:-42px;top:.25em;font-family:Georgia,serif;
+  font-size:10px;opacity:.18;transform:rotate(18deg);
+}
+.ch4 .chapter-copy .lore-p:nth-child(9n)::before,
+.ch5 .chapter-copy .lore-p:nth-child(9n)::before,
+.ch6 .chapter-copy .lore-p:nth-child(9n)::before,
+.ch7 .chapter-copy .lore-p:nth-child(9n)::before{opacity:.34;text-shadow:0 0 8px currentColor}
+.chapter-sigil{
+  animation:sigilPulse 5s ease-in-out infinite alternate;
+}
+@keyframes sigilPulse{
+  from{filter:drop-shadow(0 0 0 transparent);opacity:.42}
+  to{filter:drop-shadow(0 0 8px currentColor);opacity:.65}
+}
+.roman{
+  transition:letter-spacing 1.2s ease,opacity 1.2s ease;
+}
+.chapter-intro.visible .roman{
+  letter-spacing:.12em;
+}
+.finale .fullmoon::after{
+  content:"";position:absolute;inset:8%;border-radius:50%;
+  background:
+    radial-gradient(circle at 31% 34%,rgba(91,119,159,.11) 0 3%,transparent 4%),
+    radial-gradient(circle at 63% 58%,rgba(91,119,159,.09) 0 5%,transparent 6%),
+    radial-gradient(circle at 48% 72%,rgba(91,119,159,.08) 0 3%,transparent 4%);
+  mix-blend-mode:multiply;
+}
+@media(max-width:700px){
+  .chapter-copy .lore-p:nth-child(9n)::before{left:-17px;font-size:7px}
+  .shooting-star{display:none}
+}
+
+
+/* v4.1 cinematic opening + ending */
+.hero{
+  overflow:hidden;
+}
+.hero::before{
+  content:"";position:absolute;inset:-10%;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(circle at 50% 28%,rgba(255,255,255,.9),transparent 22%),
+    conic-gradient(from 180deg at 50% 50%,rgba(158,203,255,.10),transparent 28%,rgba(241,191,223,.10),transparent 62%,rgba(158,203,255,.08));
+  filter:blur(22px);
+  animation:heroAura 8s ease-in-out infinite alternate;
+}
+@keyframes heroAura{
+  from{transform:scale(1) rotate(-2deg);opacity:.6}
+  to{transform:scale(1.08) rotate(2deg);opacity:.95}
+}
+.hero-opening-lines{
+  position:absolute;inset:0;z-index:1;pointer-events:none;overflow:hidden;
+}
+.hero-opening-lines i{
+  position:absolute;left:50%;top:50%;width:1px;height:58vh;
+  background:linear-gradient(transparent,rgba(166,198,237,.22),transparent);
+  transform-origin:center;
+  opacity:.55;
+}
+.hero-opening-lines i:nth-child(1){transform:translate(-50%,-50%) rotate(18deg)}
+.hero-opening-lines i:nth-child(2){transform:translate(-50%,-50%) rotate(-18deg)}
+.hero-opening-lines i:nth-child(3){transform:translate(-50%,-50%) rotate(54deg);opacity:.25}
+.hero-opening-lines i:nth-child(4){transform:translate(-50%,-50%) rotate(-54deg);opacity:.25}
+.hero-inner{position:relative;z-index:3}
+.hero-sigil{
+  animation:openingSigil 2.4s cubic-bezier(.2,.8,.2,1) both 0.3s;
+}
+@keyframes openingSigil{
+  0%{opacity:0;transform:scale(.4) rotate(-28deg);filter:blur(10px)}
+  55%{opacity:1;transform:scale(1.12) rotate(4deg);filter:blur(0)}
+  100%{transform:scale(1) rotate(0)}
+}
+.hero h1{
+  opacity:0;
+  animation:titleReveal 1.8s cubic-bezier(.16,.84,.24,1) forwards .95s;
+}
+@keyframes titleReveal{
+  0%{opacity:0;letter-spacing:.28em;transform:translateY(18px);filter:blur(8px)}
+  100%{opacity:1;letter-spacing:.11em;transform:none;filter:none}
+}
+.hero .eyebrow,.hero .subtitle,.hero blockquote,.hero .down{
+  opacity:0;animation:softReveal 1.25s ease forwards;
+}
+.hero .eyebrow{animation-delay:.7s}
+.hero .subtitle{animation-delay:1.55s}
+.hero blockquote{animation-delay:2.05s}
+.hero .down{animation-delay:2.7s}
+@keyframes softReveal{to{opacity:1}}
+.opening-star{
+  position:absolute;z-index:2;left:50%;top:16%;width:5px;height:5px;border-radius:50%;
+  background:white;box-shadow:0 0 18px rgba(173,211,255,.95),0 0 42px rgba(235,188,224,.55);
+  transform:translateX(-50%);
+  animation:openingStar 3.6s ease-in-out both .2s;
+}
+@keyframes openingStar{
+  0%{opacity:0;transform:translate(-50%,-24px) scale(.2)}
+  28%{opacity:1;transform:translate(-50%,0) scale(1.5)}
+  70%{opacity:.8;transform:translate(-50%,10px) scale(.9)}
+  100%{opacity:.25;transform:translate(-50%,20px) scale(.6)}
+}
+
+/* stronger ending: eclipse-like hush, then the eyes */
+.finale{
+  min-height:130vh;
+}
+.finale::before{
+  content:"";position:absolute;inset:0;pointer-events:none;z-index:1;
+  background:radial-gradient(circle at 50% 50%,transparent 0 28%,rgba(1,3,8,.05) 44%,rgba(1,3,8,.72) 100%);
+  opacity:0;animation:endVignette 7s ease-in-out 1.6s infinite alternate;
+}
+@keyframes endVignette{to{opacity:.82}}
+.fullmoon{
+  animation:breathe 7s ease-in-out infinite alternate, moonArrival 2.7s cubic-bezier(.2,.8,.2,1) both;
+}
+@keyframes moonArrival{
+  from{opacity:0;transform:scale(.72);filter:blur(18px) drop-shadow(0 0 0 transparent)}
+  to{opacity:.55;transform:scale(1);filter:blur(0) drop-shadow(0 0 85px rgba(128,169,235,.2))}
+}
+.finale-inner{
+  opacity:0;
+  animation:finalWords 2s ease forwards 1.45s;
+}
+@keyframes finalWords{
+  from{opacity:0;transform:translateY(28px);filter:blur(6px)}
+  to{opacity:1;transform:none;filter:none}
+}
+.end-flare{
+  position:absolute;z-index:2;left:50%;top:50%;width:12px;height:12px;border-radius:50%;
+  background:rgba(255,255,255,.92);
+  box-shadow:
+    0 0 18px rgba(171,211,255,.95),
+    0 0 42px rgba(236,188,224,.6),
+    0 0 90px rgba(171,211,255,.35);
+  transform:translate(-50%,-50%) scale(.3);
+  opacity:0;
+  animation:endFlare 8s ease-in-out 3.6s infinite;
+}
+@keyframes endFlare{
+  0%,70%,100%{opacity:0;transform:translate(-50%,-50%) scale(.3)}
+  76%{opacity:.85;transform:translate(-50%,-50%) scale(1.5)}
+  84%{opacity:.18;transform:translate(-50%,-50%) scale(4)}
+}
+.final-whisper{
+  position:absolute;bottom:11vh;left:50%;transform:translateX(-50%);
+  z-index:4;font:italic clamp(14px,1.6vw,20px)/1.5 Georgia,serif;
+  letter-spacing:.08em;color:rgba(235,242,255,.52);
+  opacity:0;animation:whisperIn 2s ease forwards 4.4s;
+  white-space:nowrap;
+}
+@keyframes whisperIn{to{opacity:.65}}
+@media(prefers-reduced-motion:reduce){
+  .hero h1,.hero .eyebrow,.hero .subtitle,.hero blockquote,.hero .down,.hero-sigil,.fullmoon,.finale-inner,.final-whisper{
+    opacity:1!important;animation:none!important;filter:none!important;transform:none!important
+  }
+  .opening-star,.hero-opening-lines,.end-flare{display:none}
+}
+
+
+/* v5 release-candidate polish */
+body{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+.chapter-copy{max-width:720px}
+.chapter-intro{scroll-margin-top:80px}
+.chapter-nav-toggle{
+  position:fixed;right:26px;bottom:26px;z-index:260;width:48px;height:48px;border-radius:50%;
+  border:1px solid currentColor;display:grid;place-items:center;color:rgba(86,113,156,.82);
+  background:rgba(245,249,255,.62);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  box-shadow:0 10px 32px rgba(30,45,76,.12),inset 0 0 18px rgba(255,255,255,.45);
+  cursor:pointer;transition:.25s ease
+}
+.chapter-nav-toggle:hover{transform:translateY(-2px) scale(1.03)}
+.chapter-nav-toggle::before{content:"☾";font:26px/1 Georgia,serif}
+.chapter-nav{
+  position:fixed;right:26px;bottom:84px;z-index:259;width:min(280px,calc(100vw - 44px));
+  padding:16px;border:1px solid rgba(138,161,199,.28);border-radius:18px;
+  background:rgba(246,250,255,.84);color:#314765;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  box-shadow:0 18px 55px rgba(22,36,64,.16);opacity:0;transform:translateY(12px) scale(.98);
+  pointer-events:none;transition:.25s ease
+}
+.chapter-nav.open{opacity:1;transform:none;pointer-events:auto}
+.chapter-nav .nav-title{font-size:10px;letter-spacing:.2em;text-transform:uppercase;opacity:.55;margin:2px 4px 10px}
+.chapter-nav a{display:grid;grid-template-columns:34px 1fr;gap:10px;align-items:center;padding:9px 8px;border-radius:10px;text-decoration:none;color:inherit;font:14px/1.25 Georgia,serif}
+.chapter-nav a:hover,.chapter-nav a.active{background:rgba(122,153,198,.12)}
+.chapter-nav a .n{font-family:Inter,system-ui,sans-serif;font-size:10px;letter-spacing:.1em;opacity:.55}
+@media(min-width:1000px){
+  .chapter-shell{transform:translateX(-1.5vw)}
+  .chapter:nth-of-type(even) .chapter-shell{transform:translateX(1.5vw)}
+}
+@media(max-width:700px){
+  .hero,.chapter,.finale{padding-left:34px!important;padding-right:34px!important}
+  .chapter-nav-toggle{right:14px;bottom:14px;width:44px;height:44px}
+  .chapter-nav{right:14px;bottom:66px;width:min(290px,calc(100vw - 28px))}
+  .chapter-copy .lore-p{font-size:18px}
+  .hero h1{font-size:clamp(64px,22vw,104px)}
+}
+@media(max-width:420px){
+  .hero,.chapter,.finale{padding-left:28px!important;padding-right:28px!important}
+  .chapter-copy .lore-p{font-size:17px;line-height:1.74}
+  .chapter-copy .lore-p:nth-child(9n)::before{display:none}
+}
+
+
+/* final social links */
+.social-footer{
+  position:relative;z-index:4;
+  padding:100px 28px 120px;
+  text-align:center;
+  color:#dfe9fb;
+  background:linear-gradient(180deg,#03050b 0%,#07101c 100%);
+}
+.social-footer::before{
+  content:"";
+  position:absolute;left:50%;top:0;transform:translateX(-50%);
+  width:min(520px,70vw);height:1px;
+  background:linear-gradient(90deg,transparent,rgba(174,202,240,.45),transparent);
+}
+.social-kicker{
+  font-size:10px;
+  letter-spacing:.28em;
+  text-transform:uppercase;
+  opacity:.48;
+  margin-bottom:12px;
+}
+.social-footer h4{
+  margin:0 0 34px;
+  font:400 clamp(30px,5vw,52px)/1.2 Georgia,serif;
+  color:#eef4ff;
+}
+.social-links{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:14px;
+}
+.social-link{
+  min-width:150px;
+  padding:14px 20px;
+  border:1px solid rgba(193,214,246,.28);
+  border-radius:999px;
+  color:#e7efff;
+  text-decoration:none;
+  font-size:13px;
+  letter-spacing:.05em;
+  background:rgba(255,255,255,.025);
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+  transition:transform .25s ease,border-color .25s ease,box-shadow .25s ease,background .25s ease;
+}
+.social-link:hover{
+  transform:translateY(-2px);
+  border-color:rgba(201,221,255,.65);
+  background:linear-gradient(90deg,rgba(143,200,255,.08),rgba(239,183,220,.08));
+  box-shadow:0 0 24px rgba(153,198,255,.12),0 0 24px rgba(239,183,220,.08);
+}
+.social-note{
+  margin:28px auto 0;
+  max-width:560px;
+  font:italic 14px/1.6 Georgia,serif;
+  color:rgba(223,233,251,.5);
+}
+@media(max-width:560px){
+  .social-footer{padding:80px 24px 100px}
+  .social-links{flex-direction:column;align-items:stretch;max-width:320px;margin:auto}
+  .social-link{width:100%}
+}
+
+</style>
+</head>
+<body>
+
+<button class="chapter-nav-toggle" aria-label="Открыть навигацию по главам" aria-expanded="false"></button>
+<nav class="chapter-nav" aria-label="Главы">
+  <div class="nav-title">Главы</div>
+  <a href="#chapter-1" data-target="chapter-1"><span class="n">I</span><span>Рождение невозможного</span></a><a href="#chapter-2" data-target="chapter-2"><span class="n">II</span><span>Девушка между двумя мирами</span></a><a href="#chapter-3" data-target="chapter-3"><span class="n">III</span><span>Ошибка</span></a><a href="#chapter-4" data-target="chapter-4"><span class="n">IV</span><span>Первая Луна</span></a><a href="#chapter-5" data-target="chapter-5"><span class="n">V</span><span>Вторые Лунные Дети</span></a><a href="#chapter-6" data-target="chapter-6"><span class="n">VI</span><span>Чужая память</span></a><a href="#chapter-7" data-target="chapter-7"><span class="n">VII</span><span>«Опять…»</span></a><a href="#chapter-8" data-target="chapter-8"><span class="n">VIII</span><span>Среди людей</span></a><a href="#chapter-9" data-target="chapter-9"><span class="n">IX</span><span>Что на самом деле означает имя «Луна»</span></a><a href="#chapter-10" data-target="chapter-10"><span class="n">X</span><span>И главный вопрос</span></a>
+</nav>
+
+<div class="progress"><i></i></div>
+<div class="ornamental-frame" aria-hidden="true">
+ <span class="edge top"></span><span class="edge bottom"></span><span class="edge left"></span><span class="edge right"></span>
+ <span class="corner tl"><i></i></span><span class="corner tr"><i></i></span><span class="corner bl"><i></i></span><span class="corner br"><i></i></span>
+ <span class="frame-moon"></span><span class="frame-glow-a"></span><span class="frame-glow-b"></span>
+</div>
+
+<div class="shooting-star s1" aria-hidden="true"></div>
+<div class="shooting-star s2" aria-hidden="true"></div>
+<div class="dust" aria-hidden="true"><i style="left:15%;top:12%;width:1px;height:1px;--dur:7.0s;--dx:-18px;animation-delay:0.0s"></i><i style="left:62%;top:83%;width:1px;height:1px;--dur:8.7s;--dx:-10px;animation-delay:-1.3s"></i><i style="left:13%;top:60%;width:2px;height:2px;--dur:10.4s;--dx:-2px;animation-delay:-2.6s"></i><i style="left:60%;top:37%;width:2px;height:2px;--dur:12.1s;--dx:6px;animation-delay:-3.9s"></i><i style="left:11%;top:14%;width:3px;height:3px;--dur:13.8s;--dx:14px;animation-delay:-5.2s"></i><i style="left:58%;top:85%;width:1px;height:1px;--dur:15.5s;--dx:22px;animation-delay:-6.5s"></i><i style="left:9%;top:62%;width:1px;height:1px;--dur:17.2s;--dx:-18px;animation-delay:-7.8s"></i><i style="left:56%;top:39%;width:2px;height:2px;--dur:7.0s;--dx:-10px;animation-delay:-9.1s"></i><i style="left:7%;top:16%;width:2px;height:2px;--dur:8.7s;--dx:-2px;animation-delay:-10.4s"></i><i style="left:54%;top:87%;width:3px;height:3px;--dur:10.4s;--dx:6px;animation-delay:0.0s"></i><i style="left:5%;top:64%;width:1px;height:1px;--dur:12.1s;--dx:14px;animation-delay:-1.3s"></i><i style="left:52%;top:41%;width:1px;height:1px;--dur:13.8s;--dx:22px;animation-delay:-2.6s"></i><i style="left:3%;top:18%;width:2px;height:2px;--dur:15.5s;--dx:-18px;animation-delay:-3.9s"></i><i style="left:50%;top:89%;width:2px;height:2px;--dur:17.2s;--dx:-10px;animation-delay:-5.2s"></i><i style="left:97%;top:66%;width:3px;height:3px;--dur:7.0s;--dx:-2px;animation-delay:-6.5s"></i><i style="left:48%;top:43%;width:1px;height:1px;--dur:8.7s;--dx:6px;animation-delay:-7.8s"></i><i style="left:95%;top:20%;width:1px;height:1px;--dur:10.4s;--dx:14px;animation-delay:-9.1s"></i><i style="left:46%;top:91%;width:2px;height:2px;--dur:12.1s;--dx:22px;animation-delay:-10.4s"></i></div>
+
+<div class="ambient" aria-hidden="true"><div class="stars"><i style="left:23.22%;top:95.30%;width:1px;height:1px;animation-delay:4.23s;animation-duration:4.43s"></i><i style="left:25.25%;top:98.91%;width:1px;height:2px;animation-delay:3.85s;animation-duration:6.30s"></i><i style="left:45.41%;top:49.51%;width:1px;height:2px;animation-delay:0.54s;animation-duration:5.17s"></i><i style="left:2.96%;top:27.14%;width:2px;height:2px;animation-delay:5.41s;animation-duration:5.90s"></i><i style="left:12.15%;top:26.32%;width:1px;height:2px;animation-delay:3.72s;animation-duration:5.89s"></i><i style="left:65.76%;top:34.17%;width:1px;height:2px;animation-delay:5.42s;animation-duration:6.58s"></i><i style="left:21.38%;top:80.22%;width:3px;height:1px;animation-delay:3.24s;animation-duration:4.19s"></i><i style="left:69.78%;top:15.52%;width:3px;height:2px;animation-delay:4.37s;animation-duration:8.40s"></i><i style="left:28.99%;top:35.96%;width:2px;height:1px;animation-delay:0.95s;animation-duration:7.01s"></i><i style="left:53.12%;top:31.75%;width:2px;height:2px;animation-delay:3.02s;animation-duration:4.99s"></i><i style="left:15.72%;top:52.81%;width:3px;height:1px;animation-delay:4.85s;animation-duration:8.28s"></i><i style="left:90.48%;top:54.40%;width:2px;height:1px;animation-delay:5.45s;animation-duration:5.48s"></i><i style="left:22.54%;top:4.30%;width:2px;height:2px;animation-delay:1.79s;animation-duration:7.53s"></i><i style="left:41.86%;top:65.43%;width:1px;height:1px;animation-delay:5.60s;animation-duration:8.26s"></i><i style="left:3.51%;top:96.36%;width:1px;height:2px;animation-delay:0.70s;animation-duration:7.98s"></i><i style="left:38.28%;top:82.97%;width:3px;height:2px;animation-delay:5.43s;animation-duration:4.70s"></i><i style="left:56.27%;top:40.90%;width:1px;height:3px;animation-delay:0.42s;animation-duration:7.58s"></i><i style="left:4.34%;top:65.99%;width:3px;height:3px;animation-delay:2.16s;animation-duration:8.04s"></i><i style="left:50.48%;top:70.40%;width:3px;height:1px;animation-delay:1.14s;animation-duration:8.56s"></i><i style="left:34.40%;top:65.50%;width:1px;height:2px;animation-delay:2.11s;animation-duration:8.82s"></i><i style="left:1.29%;top:82.90%;width:1px;height:1px;animation-delay:5.25s;animation-duration:4.17s"></i><i style="left:95.59%;top:75.42%;width:3px;height:1px;animation-delay:1.07s;animation-duration:8.85s"></i><i style="left:44.27%;top:9.17%;width:3px;height:1px;animation-delay:2.98s;animation-duration:6.37s"></i><i style="left:16.14%;top:12.96%;width:3px;height:2px;animation-delay:3.89s;animation-duration:7.60s"></i><i style="left:51.42%;top:9.86%;width:2px;height:3px;animation-delay:2.36s;animation-duration:5.80s"></i><i style="left:23.10%;top:20.36%;width:2px;height:1px;animation-delay:0.65s;animation-duration:7.63s"></i><i style="left:70.42%;top:60.93%;width:1px;height:2px;animation-delay:4.98s;animation-duration:6.64s"></i><i style="left:96.91%;top:74.40%;width:3px;height:3px;animation-delay:4.92s;animation-duration:6.84s"></i><i style="left:50.15%;top:32.76%;width:2px;height:3px;animation-delay:3.88s;animation-duration:4.03s"></i><i style="left:61.09%;top:90.07%;width:2px;height:2px;animation-delay:1.34s;animation-duration:5.48s"></i><i style="left:54.64%;top:96.73%;width:2px;height:2px;animation-delay:3.10s;animation-duration:7.13s"></i><i style="left:94.79%;top:77.76%;width:2px;height:1px;animation-delay:1.17s;animation-duration:5.85s"></i><i style="left:94.94%;top:84.01%;width:2px;height:1px;animation-delay:1.74s;animation-duration:7.07s"></i><i style="left:83.58%;top:68.07%;width:2px;height:3px;animation-delay:3.51s;animation-duration:7.37s"></i><i style="left:20.20%;top:81.62%;width:3px;height:1px;animation-delay:1.61s;animation-duration:4.34s"></i><i style="left:72.85%;top:27.55%;width:2px;height:1px;animation-delay:3.75s;animation-duration:8.12s"></i><i style="left:97.70%;top:27.86%;width:3px;height:2px;animation-delay:1.66s;animation-duration:8.44s"></i><i style="left:41.36%;top:36.41%;width:1px;height:3px;animation-delay:4.48s;animation-duration:5.25s"></i><i style="left:80.70%;top:59.47%;width:1px;height:2px;animation-delay:2.98s;animation-duration:4.53s"></i><i style="left:11.94%;top:9.25%;width:1px;height:3px;animation-delay:5.96s;animation-duration:8.60s"></i><i style="left:78.05%;top:14.41%;width:3px;height:1px;animation-delay:4.11s;animation-duration:4.44s"></i><i style="left:46.34%;top:86.13%;width:2px;height:3px;animation-delay:0.56s;animation-duration:7.04s"></i><i style="left:85.77%;top:64.97%;width:2px;height:1px;animation-delay:5.01s;animation-duration:4.42s"></i><i style="left:14.46%;top:79.85%;width:1px;height:1px;animation-delay:4.35s;animation-duration:7.00s"></i><i style="left:32.29%;top:30.07%;width:2px;height:2px;animation-delay:0.40s;animation-duration:8.50s"></i><i style="left:90.82%;top:60.73%;width:2px;height:1px;animation-delay:0.94s;animation-duration:8.47s"></i><i style="left:15.58%;top:72.32%;width:1px;height:1px;animation-delay:3.21s;animation-duration:4.41s"></i><i style="left:91.65%;top:34.02%;width:1px;height:1px;animation-delay:5.67s;animation-duration:4.29s"></i><i style="left:78.07%;top:18.41%;width:1px;height:3px;animation-delay:3.84s;animation-duration:5.48s"></i><i style="left:24.74%;top:50.04%;width:1px;height:3px;animation-delay:4.31s;animation-duration:4.41s"></i><i style="left:14.47%;top:74.46%;width:1px;height:2px;animation-delay:1.31s;animation-duration:4.87s"></i><i style="left:14.23%;top:44.16%;width:2px;height:3px;animation-delay:4.01s;animation-duration:5.44s"></i><i style="left:80.81%;top:43.78%;width:2px;height:3px;animation-delay:5.90s;animation-duration:6.45s"></i><i style="left:36.92%;top:83.71%;width:3px;height:1px;animation-delay:1.85s;animation-duration:7.40s"></i><i style="left:47.64%;top:13.53%;width:2px;height:2px;animation-delay:3.81s;animation-duration:6.53s"></i><i style="left:78.30%;top:51.16%;width:1px;height:3px;animation-delay:3.16s;animation-duration:7.83s"></i><i style="left:81.84%;top:64.45%;width:1px;height:2px;animation-delay:2.36s;animation-duration:4.17s"></i><i style="left:37.41%;top:93.59%;width:2px;height:2px;animation-delay:4.19s;animation-duration:7.11s"></i><i style="left:15.04%;top:68.46%;width:1px;height:1px;animation-delay:2.69s;animation-duration:8.74s"></i><i style="left:76.25%;top:83.48%;width:3px;height:3px;animation-delay:5.79s;animation-duration:4.54s"></i><i style="left:98.91%;top:4.88%;width:3px;height:2px;animation-delay:5.92s;animation-duration:5.79s"></i><i style="left:93.78%;top:64.72%;width:2px;height:1px;animation-delay:3.88s;animation-duration:6.38s"></i><i style="left:57.49%;top:92.40%;width:2px;height:2px;animation-delay:4.46s;animation-duration:7.35s"></i><i style="left:72.98%;top:92.02%;width:2px;height:1px;animation-delay:0.19s;animation-duration:5.16s"></i><i style="left:36.33%;top:36.91%;width:3px;height:1px;animation-delay:1.81s;animation-duration:7.24s"></i><i style="left:78.02%;top:77.76%;width:2px;height:3px;animation-delay:4.11s;animation-duration:6.27s"></i><i style="left:30.05%;top:40.50%;width:2px;height:2px;animation-delay:3.94s;animation-duration:4.45s"></i><i style="left:89.01%;top:44.00%;width:1px;height:3px;animation-delay:5.82s;animation-duration:4.54s"></i><i style="left:71.33%;top:66.36%;width:2px;height:2px;animation-delay:3.44s;animation-duration:5.02s"></i><i style="left:52.28%;top:58.83%;width:1px;height:3px;animation-delay:4.94s;animation-duration:4.44s"></i></div><div class="eye-glows"></div></div>
+
+<header class="hero"><div class="hero-opening-lines" aria-hidden="true"><i></i><i></i><i></i><i></i></div><div class="opening-star" aria-hidden="true"></div>
+ <div class="hero-inner"><div class="hero-sigil"></div><div class="eyebrow">Лунное дитя</div><h1>ЛУНА</h1>
+ <div class="subtitle">история между двумя мирами</div><blockquote>«Для её родителей она никогда не была ошибкой.»</blockquote></div>
+ <div class="down">читать историю</div>
+</header>
+
+<main>
+<section class="chapter ch1" id="chapter-1" data-chapter="1">
+  <div class="shadow-label label-error" aria-hidden="true">ОШИБКА</div>
+  <div class="chapter-frame-deco" aria-hidden="true"></div>
+  <div class="chapter-shell">
+    <header class="chapter-intro reveal">
+      <div class="chapter-sigil"><i></i></div>
+      <div class="roman">I</div>
+      <h2>Рождение невозможного</h2>
+      <div class="title-rule"><i></i></div>
+    </header>
+    
+    <article class="chapter-copy reveal">
+      <p class="lore-p">Луна — существо, которого не должно было существовать.</p>
+<p class="lore-p">Она родилась от любви эльфа и вампира — двух рас, которые столетиями считали друг друга врагами и скверной. Их союз был запрещён, а ребёнок, рождённый от двух несовместимых кровей, считался невозможным.</p>
+<p class="lore-p beat">Но Луна появилась.</p>
+<p class="lore-p">Для её родителей она никогда не была ошибкой.</p>
+<p class="lore-p beat">Она была их дочерью.</p>
+<p class="lore-p">Их любовь была настоящей — настолько настоящей, что они решились бросить вызов миру, который учил их ненавидеть друг друга.</p>
+<p class="lore-p">Но для остальных Луна стала чем-то совершенно иным.</p>
+<p class="lore-p beat">Нарушением.</p>
+<p class="lore-p">Доказательством того, что древние законы можно переступить.</p>
+<p class="lore-p">И потому многие называли её ошибкой.</p>
+<p class="lore-p">Не потому, что она была ею.</p>
+<p class="lore-p">А потому, что они не могли принять сам факт её существования.</p>
+    </article>
+  </div>
+</section>
+<section class="chapter ch2" id="chapter-2" data-chapter="2">
+  
+  <div class="chapter-frame-deco" aria-hidden="true"></div>
+  <div class="chapter-shell">
+    <header class="chapter-intro reveal">
+      <div class="chapter-sigil"><i></i></div>
+      <div class="roman">II</div>
+      <h2>Девушка между двумя мирами</h2>
+      <div class="title-rule"><i></i></div>
+    </header>
+    
+    <article class="chapter-copy reveal">
+      <p class="lore-p">Луна росла, зная, что в ней живут две природы.</p>
+<p class="lore-p">Эльфийская кровь подарила ей светлую внешность, необычные глаза и связь с тем, что древние народы привыкли считать чистым и прекрасным.</p>
+<p class="lore-p">Вампирская — другую сторону её сущности: более тёмную, инстинктивную и непредсказуемую.</p>
+<p class="lore-p">Но Луна не была ни эльфом, ни вампиром.</p>
+<p class="lore-p">И чем старше она становилась, тем сильнее понимала:</p>
+<p class="lore-p">две половины не обязаны превращаться в одну из них.</p>
+<p class="lore-p">Она может быть чем-то третьим.</p>
+<p class="lore-p">Чем-то, чему пока даже нет названия.</p>
+<p class="lore-p">Большую часть времени Луна старается выглядеть обычной среди людей.</p>
+<p class="lore-p">Белые волосы. Голубоватые глаза. Обычная одежда.</p>
+<p class="lore-p">Она не стремится привлекать внимание к тому, что скрывается под этой спокойной оболочкой.</p>
+<p class="lore-p">Но иногда контроль ослабевает.</p>
+<p class="lore-p">Когда эмоции становятся слишком сильными, её тело выдаёт то, что она пытается скрыть.</p>
+<p class="lore-p">Появляются кошачьи уши.</p>
+<p class="lore-p beat">А следом — хвост.</p>
+<p class="lore-p">Луна не знает, откуда они взялись.</p>
+<p class="lore-p">Эльфийская кровь не объясняет их.</p>
+<p class="lore-p beat">Вампирская — тоже.</p>
+<p class="lore-p">Древние хроники называют это по-разному: меткой, побочным эффектом, следствием смешения двух сил.</p>
+<p class="lore-p">Но ни одно объяснение не является доказанным.</p>
+<p class="lore-p">И, возможно, именно поэтому Луна боится узнать правду.</p>
+    </article>
+  </div>
+</section>
+<section class="chapter ch3" id="chapter-3" data-chapter="3">
+  <div class="shadow-label label-error strong" aria-hidden="true">ОШИБКА</div>
+        <div class="rejection-layer" aria-hidden="true"><span>НАРУШЕНИЕ</span><span>ПРОКЛЯТИЕ</span><span>ОШИБКА</span></div>
+  <div class="chapter-frame-deco" aria-hidden="true"></div>
+  <div class="chapter-shell">
+    <header class="chapter-intro reveal">
+      <div class="chapter-sigil"><i></i></div>
+      <div class="roman">III</div>
+      <h2>Ошибка</h2>
+      <div class="title-rule"><i></i></div>
+    </header>
+    
+    <article class="chapter-copy reveal">
+      <p class="lore-p">Эльфы смотрят на неё с настороженностью.</p>
+<p class="lore-p">Вампиры — с любопытством и страхом.</p>
+<p class="lore-p">Для одних она доказательство нарушения древних законов.</p>
+<p class="lore-p">Для других — потенциальная угроза.</p>
+<p class="lore-p">Некоторые хотели бы изучить её.</p>
+<p class="lore-p">Некоторые предпочли бы, чтобы таких, как она, никогда не существовало.</p>
+<p class="lore-p">А Луна постепенно привыкла к одному слову.</p>
+<p class="lore-p beat error-word">Ошибка.</p>
+<p class="lore-p">Она слышала его достаточно часто, чтобы однажды начать задаваться вопросом:</p>
+<p class="lore-p beat quote">«А вдруг они правы?»</p>
+<p class="lore-p quote">«А вдруг со мной действительно что-то не так?»</p>
+<p class="lore-p quote">«А вдруг я всегда делаю что-то неправильно?»</p>
+<p class="lore-p">Но есть одна вещь, которую Луна никогда не должна забывать.</p>
+<p class="lore-p">Её родители так не думали.</p>
+<p class="lore-p">Для них она никогда не была нарушением закона.</p>
+<p class="lore-p beat">Не была проклятием.</p>
+<p class="lore-p beat">Не была ошибкой.</p>
+<p class="lore-p">Она была ребёнком, которого они любили.</p>
+<p class="lore-p">И именно поэтому самое сложное путешествие Луны — не доказать другим, что она имеет право существовать.</p>
+<p class="lore-p">А научиться самой в это поверить.</p>
+    </article>
+  </div>
+</section>
+<section class="chapter ch4" id="chapter-4" data-chapter="4">
+  
+  <div class="chapter-frame-deco" aria-hidden="true"></div>
+  <div class="chapter-shell">
+    <header class="chapter-intro reveal">
+      <div class="chapter-sigil"><i></i></div>
+      <div class="roman">IV</div>
+      <h2>Первая Луна</h2>
+      <div class="title-rule"><i></i></div>
+    </header>
+    
+    <article class="chapter-copy reveal">
+      <p class="lore-p beat">Но Луна не первая.</p>
+<p class="lore-p">Когда-то очень давно, задолго до её рождения, существовало другое дитя.</p>
+<p class="lore-p">Её называли Первой Луной.</p>
+<p class="lore-p">Никто не знает её настоящего имени.</p>
+<p class="lore-p">Даже древнейшие хроники сохранили лишь обрывки.</p>
+<p class="lore-p">Говорят, она родилась от эльфийки и вампира в ту ночь, когда луна на мгновение будто задержала дыхание.</p>
+<p class="lore-p">Она была первой, в ком две враждующие крови действительно встретились.</p>
+<p class="lore-p beat">Обе расы боялись её.</p>
+<p class="lore-p">Эльфы хотели спрятать её от мира.</p>
+<p class="lore-p">Вампиры хотели понять, можно ли использовать её кровь.</p>
+<p class="lore-p">Но Первая Луна отказалась принадлежать кому-либо.</p>
+<p class="lore-p beat">Она ушла.</p>
+<p class="lore-p">И какое-то время странствовала между двумя мирами.</p>
+<p class="lore-p">Говорят, рядом с ней старые враги опускали оружие.</p>
+<p class="lore-p">Проклятия становились слабее.</p>
+<p class="lore-p">А древняя ненависть хотя бы на короткое время замолкала.</p>
+<p class="lore-p">Но однажды Первая Луна исчезла.</p>
+<p class="lore-p">Никто не знает, что произошло.</p>
+<p class="lore-p">Одни считают, что две крови внутри неё уничтожили друг друга.</p>
+<p class="lore-p">Другие верят, что она ушла за пределы мира.</p>
+<p class="lore-p">А самые старые шёпоты говорят:</p>
+<p class="lore-p beat">Первая Луна не умерла.</p>
+<p class="lore-p">Она просто закрыла глаза.</p>
+<p class="lore-p">И продолжила наблюдать.</p>
+    </article>
+  </div>
+</section>
+<section class="chapter ch5" id="chapter-5" data-chapter="5">
+  
+  <div class="chapter-frame-deco" aria-hidden="true"></div>
+  <div class="chapter-shell">
+    <header class="chapter-intro reveal">
+      <div class="chapter-sigil"><i></i></div>
+      <div class="roman">V</div>
+      <h2>Вторые Лунные Дети</h2>
+      <div class="title-rule"><i></i></div>
+    </header>
+    
+    <article class="chapter-copy reveal">
+      <p class="lore-p">После её исчезновения прошли века.</p>
+<p class="lore-p">Мир почти забыл о Первой Луне.</p>
+<p class="lore-p beat">Почти.</p>
+<p class="lore-p">Потому что её появление оставило после себя нечто, чего никто не смог объяснить.</p>
+<p class="lore-p">Тонкую трещину в самой ткани мира.</p>
+<p class="lore-p">И иногда — спустя десятки или даже сотни лет — эта трещина снова открывается.</p>
+<p class="lore-p beat">Появляется ребёнок.</p>
+<p class="lore-p">Не прямой потомок Первой Луны.</p>
+<p class="lore-p beat">Не её наследник.</p>
+<p class="lore-p beat">А отголосок.</p>
+<p class="lore-p">Так появились Вторые Лунные Дети.</p>
+<p class="lore-p">Каждый из них рождается от эльфа и вампира.</p>
+<p class="lore-p">И каждый раз древние народы снова понимают:</p>
+<p class="lore-p">трещина никуда не исчезла.</p>
+<p class="lore-p">Большинство Лунных Детей не проживают долгую жизнь.</p>
+<p class="lore-p">Некоторые погибают, не выдержав противоречия двух природ.</p>
+<p class="lore-p">Другие скрываются настолько глубоко, что их невозможно найти.</p>
+<p class="lore-p">Некоторые начинают слышать чужие голоса.</p>
+<p class="lore-p">А самые загадочные просто исчезают.</p>
+<p class="lore-p">Так же, как исчезла Первая Луна.</p>
+<p class="lore-p">И именно поэтому древние боятся их.</p>
+<p class="lore-p">Не потому, что они обязательно сильны.</p>
+<p class="lore-p">А потому, что никто не знает, зачем они продолжают появляться.</p>
+    </article>
+  </div>
+</section>
+<section class="chapter ch6" id="chapter-6" data-chapter="6">
+  <div class="memory-layer" aria-hidden="true">
+          <span class="memory m1">Серебряные леса.</span>
+          <span class="memory m2">Подземные дворцы.</span>
+          <span class="memory m3">Поле боя под полной луной.</span>
+        </div>
+  <div class="chapter-frame-deco" aria-hidden="true"></div>
+  <div class="chapter-shell">
+    <header class="chapter-intro reveal">
+      <div class="chapter-sigil"><i></i></div>
+      <div class="roman">VI</div>
+      <h2>Чужая память</h2>
+      <div class="title-rule"><i></i></div>
+    </header>
+    
+    <article class="chapter-copy reveal">
+      <p class="lore-p">Луна — одно из Вторых Лунных Детей.</p>
+<p class="lore-p">И вместе с кровью ей досталось нечто ещё.</p>
+<p class="lore-p beat">Отголоски.</p>
+<p class="lore-p">Но это не обычные воспоминания.</p>
+<p class="lore-p">Она никогда не думает:</p>
+<p class="lore-p beat quote">«Я была там.»</p>
+<p class="lore-p">Она просто иногда чувствует.</p>
+<p class="lore-p beat">Иногда — эмоции.</p>
+<p class="lore-p">Внезапную тоску по человеку, которого никогда не знала.</p>
+<p class="lore-p">Усталость от войны, которой никогда не была свидетелем.</p>
+<p class="lore-p">Ярость, которой нет причины.</p>
+<p class="lore-p">Или нежность к кому-то, чьего лица она даже не может вспомнить.</p>
+<p class="lore-p beat">Иногда — сны.</p>
+<p class="lore-p beat">Серебряные леса.</p>
+<p class="lore-p beat">Подземные дворцы.</p>
+<p class="lore-p">Поле боя под полной луной.</p>
+<p class="lore-p">Лицо женщины, которую она никогда не встречала.</p>
+<p class="lore-p">После пробуждения всё исчезает.</p>
+<p class="lore-p beat">Но ощущение остаётся.</p>
+<p class="lore-p">Слишком настоящее, чтобы назвать его обычным сном.</p>
+<p class="lore-p beat">Иногда — знания.</p>
+<p class="lore-p">Слово на древнем языке.</p>
+<p class="lore-p beat">Жест.</p>
+<p class="lore-p beat">Старинный обычай.</p>
+<p class="lore-p">То, чему Луна никогда не училась.</p>
+<p class="lore-p">Но её тело почему-то знает.</p>
+<p class="lore-p beat">А иногда…</p>
+<p class="lore-p beat">она смотрит в зеркало.</p>
+<p class="lore-p double-vision">И на мгновение ей кажется, что за её собственными глазами кто-то ещё смотрит на мир.</p>
+<p class="lore-p beat">Не зло.</p>
+<p class="lore-p beat">Не агрессивно.</p>
+<p class="lore-p beat">Скорее…</p>
+<p class="lore-p beat">устало.</p>
+<p class="lore-p">Будто этот кто-то уже видел всё это раньше.</p>
+    </article>
+  </div>
+</section>
+<section class="chapter ch7" id="chapter-7" data-chapter="7">
+  
+  <div class="chapter-frame-deco" aria-hidden="true"></div>
+  <div class="chapter-shell">
+    <header class="chapter-intro reveal">
+      <div class="chapter-sigil"><i></i></div>
+      <div class="roman">VII</div>
+      <h2>«Опять…»</h2>
+      <div class="title-rule"><i></i></div>
+    </header>
+    <div class="void-stage"><span>«Опять…»</span></div>
+    <article class="chapter-copy reveal">
+      <p class="lore-p">Иногда, когда Луна особенно сильно теряет контроль, вместе с ушами и хвостом приходит странное ощущение.</p>
+<p class="lore-p">Будто её тело на мгновение вспоминает другую форму.</p>
+<p class="lore-p beat">Более древнюю.</p>
+<p class="lore-p beat">Более сильную.</p>
+<p class="lore-p">Не совсем человеческую.</p>
+<p class="lore-p">И в такие моменты ей иногда кажется, что где-то очень далеко кто-то открывает глаза.</p>
+<p class="lore-p">И слышится едва различимый шёпот:</p>
+<p class="lore-p beat quote">«Опять…»</p>
+<p class="lore-p">Луна не знает, кому принадлежит этот голос.</p>
+<p class="lore-p">Первой Луне?</p>
+<p class="lore-p">Ей самой?</p>
+<p class="lore-p">Или чему-то, что существовало задолго до них обеих?</p>
+<p class="lore-p beat">Она пока не знает.</p>
+    </article>
+  </div>
+</section>
+<section class="chapter ch8" id="chapter-8" data-chapter="8">
+  
+  <div class="chapter-frame-deco" aria-hidden="true"></div>
+  <div class="chapter-shell">
+    <header class="chapter-intro reveal">
+      <div class="chapter-sigil"><i></i></div>
+      <div class="roman">VIII</div>
+      <h2>Среди людей</h2>
+      <div class="title-rule"><i></i></div>
+    </header>
+    
+    <article class="chapter-copy reveal">
+      <p class="lore-p">Из всех существующих миров Луна спокойнее всего чувствует себя среди людей.</p>
+<p class="lore-p">Люди не знают древних законов.</p>
+<p class="lore-p beat">Не знают легенд.</p>
+<p class="lore-p">Не видят в ней нарушение многовекового порядка.</p>
+<p class="lore-p">Для них она просто девушка.</p>
+<p class="lore-p">Поэтому Луна остаётся среди них.</p>
+<p class="lore-p beat">Наблюдает.</p>
+<p class="lore-p beat">Слушает.</p>
+<p class="lore-p beat">Учится.</p>
+<p class="lore-p">Иногда рассказывает о себе.</p>
+<p class="lore-p">Иногда скрывает слишком многое.</p>
+<p class="lore-p">А иногда позволяет себе быть увиденной настоящей.</p>
+<p class="lore-p">Возможно, именно поэтому она начинает стримить.</p>
+<p class="lore-p">Не для того, чтобы доказать кому-то свою ценность.</p>
+<p class="lore-p">Не для того, чтобы найти ответ на все вопросы.</p>
+<p class="lore-p">А потому что ей хочется узнать людей.</p>
+<p class="lore-p beat">Узнать себя.</p>
+<p class="lore-p">И, возможно, впервые найти место, где ей не придётся выбирать, кем именно ей быть.</p>
+    </article>
+  </div>
+</section>
+<section class="chapter ch9" id="chapter-9" data-chapter="9">
+  
+  <div class="chapter-frame-deco" aria-hidden="true"></div>
+  <div class="chapter-shell">
+    <header class="chapter-intro reveal">
+      <div class="chapter-sigil"><i></i></div>
+      <div class="roman">IX</div>
+      <h2>Что на самом деле означает имя «Луна»</h2>
+      <div class="title-rule"><i></i></div>
+    </header>
+    
+    <article class="chapter-copy reveal">
+      <p class="lore-p">Древние народы называют таких, как она, по-разному.</p>
+<p class="lore-p beat">Трещинами.</p>
+<p class="lore-p beat">Бледными Звёздами.</p>
+<p class="lore-p beat">Ошибками ночного неба.</p>
+<p class="lore-p beat">Нерождёнными.</p>
+<p class="lore-p">Но её родители дали ей другое имя.</p>
+<p class="lore-p beat">Луна.</p>
+<p class="lore-p beat">Не как пророчество.</p>
+<p class="lore-p beat">Не как титул.</p>
+<p class="lore-p">Не потому, что она должна была стать великой.</p>
+<p class="lore-p">Просто потому, что они хотели дать своей дочери имя, которое не принадлежало ни эльфам, ни вампирам.</p>
+<p class="lore-p beat">Оно принадлежало ей.</p>
+    </article>
+  </div>
+</section>
+<section class="chapter ch10" id="chapter-10" data-chapter="10">
+  
+  <div class="chapter-frame-deco" aria-hidden="true"></div>
+  <div class="chapter-shell">
+    <header class="chapter-intro reveal">
+      <div class="chapter-sigil"><i></i></div>
+      <div class="roman">X</div>
+      <h2>И главный вопрос</h2>
+      <div class="title-rule"><i></i></div>
+    </header>
+    
+    <article class="chapter-copy reveal">
+      <p class="lore-p">Луна всю жизнь ищет ответ на один вопрос:</p>
+<p class="lore-p">Почему она появилась?</p>
+<p class="lore-p">Древние считают её ошибкой.</p>
+<p class="lore-p">Некоторые считают её угрозой.</p>
+<p class="lore-p">Кто-то видит в ней повторение Первой Луны.</p>
+<p class="lore-p">Кто-то — ключ к чему-то древнему.</p>
+<p class="lore-p">А сама Луна иногда боится, что все они могут быть правы.</p>
+<p class="lore-p">Но, возможно, главный ответ гораздо проще.</p>
+<p class="lore-p">Она появилась потому, что однажды два существа, которым весь мир велел ненавидеть друг друга, выбрали любовь.</p>
+<p class="lore-p">И из этой любви родилась она.</p>
+<p class="lore-p beat final-identity">Не ошибка.</p>
+<p class="lore-p beat final-identity">Не проклятие.</p>
+<p class="lore-p beat final-identity">Не копия Первой Луны.</p>
+<p class="lore-p final-identity">Не половина эльфа и половина вампира.</p>
+<p class="lore-p beat final-identity">Луна.</p>
+<p class="lore-p">Возможно, её история никогда не заключалась в том, чтобы выяснить, к какому миру она принадлежит.</p>
+<p class="lore-p">Возможно, ей предстоит понять нечто гораздо более страшное для древних рас:</p>
+<p class="lore-p">ей вовсе не нужно принадлежать ни одному из них.</p>
+<p class="lore-p">И, может быть, именно поэтому Вторые Лунные Дети продолжают появляться.</p>
+<p class="lore-p">Не потому, что мир снова совершает одну и ту же ошибку.</p>
+<p class="lore-p">А потому, что мир пытается сказать что-то, чего ещё никто не понял.</p>
+<p class="lore-p">А когда-нибудь Луна может найти ответ.</p>
+<p class="lore-p">И тогда станет известно, почему Первая исчезла.</p>
+<p class="lore-p">Почему Лунные Дети продолжают рождаться.</p>
+<p class="lore-p">Что на самом деле скрывается за кошачьими ушами и хвостом.</p>
+<p class="lore-p">И самое главное —</p>
+<p class="lore-p">почему именно сейчас Первая Луна снова открыла глаза. 🌙</p>
+    </article>
+  </div>
+</section></main>
+
+<section class="finale"><div class="end-flare" aria-hidden="true"></div>
+ <div class="fullmoon"></div>
+ <div class="finale-inner reveal"><small>И самое главное</small><h3>Первая Луна снова<br>открыла глаза.</h3><div class="eyes"><i></i><i></i></div></div>
+ <div class="final-whisper" aria-hidden="true">…и где-то далеко кто-то снова смотрит.</div><div class="endmark">Луна · Лунное дитя</div>
+</section>
+
+<script>
+const root=document.documentElement,bar=document.querySelector('.progress i'),frame=document.querySelector('.ornamental-frame');
+const memories=[...document.querySelectorAll('.memory')],ch7=document.querySelector('.ch7');
+const palette=[
+ ['#f5f9ff','rgba(111,139,180,.30)'],['#edf6ff','rgba(105,137,181,.30)'],['#d7e7f9','rgba(89,116,158,.34)'],
+ ['#0d1629','rgba(205,222,250,.62)'],['#08101f','rgba(205,222,252,.66)'],['#07101d','rgba(221,211,255,.68)'],
+ ['#03050b','rgba(211,226,255,.72)'],['#111d35','rgba(231,210,252,.62)'],['#d9e8fa','rgba(99,126,168,.31)'],['#dceaff','rgba(103,132,176,.30)']
+];
+function lerp(a,b,t){return a+(b-a)*t}
+function hex(c){c=c.replace('#','');return [parseInt(c.slice(0,2),16),parseInt(c.slice(2,4),16),parseInt(c.slice(4,6),16)]}
+function mix(a,b,t){let A=hex(a),B=hex(b);return '#'+A.map((v,i)=>Math.round(lerp(v,B[i],t)).toString(16).padStart(2,'0')).join('')}
+function scrollFx(){
+ const max=document.documentElement.scrollHeight-innerHeight,p=max?scrollY/max:0;bar.style.width=(p*100)+'%';
+ root.style.setProperty('--glow',String(.08+Math.max(0,.22-Math.abs(p-.58)*.45)));
+ const chapters=[...document.querySelectorAll('.chapter')];
+ let active=0,local=0;
+ chapters.forEach((c,i)=>{const r=c.getBoundingClientRect();if(r.top<=innerHeight*.55&&r.bottom>=innerHeight*.45){active=i;local=Math.min(1,Math.max(0,(innerHeight*.55-r.top)/Math.max(1,r.height)))}});
+ const next=Math.min(active+1,palette.length-1),bg=mix(palette[active][0],palette[next][0],local*.45);
+ root.style.setProperty('--pagebg',bg); frame.style.color=palette[active][1];
+ memories.forEach((m,i)=>{const r=m.closest('.chapter').getBoundingClientRect(),q=(innerHeight-r.top)/(innerHeight+r.height);m.style.transform=`translate3d(${(q-.5)*(i%2?280:-240)}px,0,0)`});
+}
+addEventListener('scroll',scrollFx,{passive:true});scrollFx();
+
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');if(e.target.closest('.ch7'))ch7.classList.add('active')}}),{threshold:.12});
+document.querySelectorAll('.reveal').forEach(x=>io.observe(x));
+addEventListener('pointermove',e=>{if(!matchMedia('(pointer:fine)').matches)return;root.style.setProperty('--sx',((e.clientX/innerWidth-.5)*-14)+'px');root.style.setProperty('--sy',((e.clientY/innerHeight-.5)*-10)+'px')},{passive:true});
+
+const navToggle=document.querySelector('.chapter-nav-toggle');
+const nav=document.querySelector('.chapter-nav');
+const navLinks=[...document.querySelectorAll('.chapter-nav a')];
+navToggle.addEventListener('click',()=>{
+  const open=nav.classList.toggle('open');
+  navToggle.setAttribute('aria-expanded',String(open));
+});
+navLinks.forEach(a=>a.addEventListener('click',()=>{
+  nav.classList.remove('open');
+  navToggle.setAttribute('aria-expanded','false');
+}));
+document.addEventListener('pointerdown',e=>{
+  if(!nav.contains(e.target)&&e.target!==navToggle){
+    nav.classList.remove('open');
+    navToggle.setAttribute('aria-expanded','false');
+  }
+});
+const chapterObserver=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(!e.isIntersecting)return;
+    const id=e.target.id;
+    navLinks.forEach(a=>a.classList.toggle('active',a.dataset.target===id));
+    const idx=Number(e.target.dataset.chapter||0);
+    const dark=idx>=4&&idx<=8;
+    navToggle.style.background=dark?'rgba(8,14,27,.66)':'rgba(245,249,255,.66)';
+    navToggle.style.color=dark?'rgba(220,232,255,.9)':'rgba(86,113,156,.82)';
+    nav.style.background=dark?'rgba(8,14,27,.88)':'rgba(246,250,255,.86)';
+    nav.style.color=dark?'#e3ecff':'#314765';
+  });
+},{threshold:.42});
+document.querySelectorAll('.chapter').forEach(c=>chapterObserver.observe(c));
+
+</script>
+
+<section class="social-footer" aria-label="Социальные сети Луны">
+  <div class="social-kicker">остаться на связи</div>
+  <h4>Найти Луну</h4>
+  <div class="social-links">
+    <a class="social-link" href="https://www.twitch.tv/min_akeno" target="_blank" rel="noopener noreferrer">Twitch</a>
+    <a class="social-link" href="https://t.me/MinAkeno" target="_blank" rel="noopener noreferrer">Telegram</a>
+    <a class="social-link" href="https://discord.gg/jCvC5Gq8" target="_blank" rel="noopener noreferrer">Discord</a>
+  </div>
+  <div class="social-note">А здесь её история продолжается среди людей.</div>
+</section>
+
+</body></html>
